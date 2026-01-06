@@ -8,7 +8,8 @@ export class InPlaceDashboard {
       recentTrades: [],
       signals: [],
       dailyStats: {},
-      hotSignals: []
+      hotSignals: [],
+      marketHeat: []
     };
     this.frameCount = 0;
     this.nextAnalysisTime = null;
@@ -47,6 +48,28 @@ export class InPlaceDashboard {
     return chalk.cyan(frames[this.frameCount % frames.length]);
   }
 
+  getHeatBar(percent, width = 20) {
+    const filled = Math.round((percent / 100) * width);
+    const empty = width - filled;
+
+    let color;
+    if (percent >= 90) color = chalk.hex('#FF0000'); // Red hot
+    else if (percent >= 75) color = chalk.hex('#FF4500'); // Orange red
+    else if (percent >= 60) color = chalk.hex('#FFA500'); // Orange
+    else if (percent >= 40) color = chalk.hex('#FFD700'); // Gold
+    else color = chalk.hex('#4169E1'); // Cool blue
+
+    return color('█'.repeat(filled)) + chalk.gray('░'.repeat(empty));
+  }
+
+  getTemperatureIcon(percent) {
+    if (percent >= 90) return chalk.hex('#FF0000')('🔥'); // Super hot
+    if (percent >= 75) return chalk.hex('#FF4500')('🌡️'); // Hot
+    if (percent >= 60) return chalk.hex('#FFA500')('♨️'); // Warm
+    if (percent >= 40) return chalk.hex('#FFD700')('💨'); // Mild
+    return chalk.hex('#4169E1')('❄️'); // Cold
+  }
+
   // Helper to ensure exact column width (49 chars for each column)
   padColumn(content, width = 49) {
     // Strip ANSI codes to measure actual length
@@ -54,7 +77,7 @@ export class InPlaceDashboard {
 
     // Count emoji characters (they take 2 visual spaces but count as 1-2 chars)
     // Common emojis used in dashboard
-    const emojiCount = (stripped.match(/[💰📊✅🛑▲▼🔥⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏]/g) || []).length;
+    const emojiCount = (stripped.match(/[💰📊✅🛑▲▼🔥⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏🌡️♨️💨❄️📈📉🟢🔴🎯💼]/g) || []).length;
 
     // Adjust for emoji width (each emoji takes roughly 1 extra space)
     const visualLength = stripped.length + emojiCount;
@@ -142,54 +165,82 @@ export class InPlaceDashboard {
 
     lines.push('');
 
-    // Positions
-    lines.push(chalk.hex('#00D9FF')('╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗'));
-    lines.push(chalk.hex('#00D9FF')('║ ') + chalk.hex('#FFD700').bold('📈 OPEN POSITIONS') + ' '.repeat(90) + chalk.hex('#00D9FF')('║'));
-    lines.push(chalk.hex('#00D9FF')('╠═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╣'));
+    // Positions and Market Heat side by side
+    lines.push(chalk.hex('#00D9FF')('╔═══════════════════════════════════════════════════╦═══════════════════════════════════════════════════╗'));
 
-    if (this.tradingData.positions.length === 0) {
-      lines.push(chalk.hex('#00D9FF')('║ ') + chalk.gray('No open positions'.padEnd(109)) + chalk.hex('#00D9FF')('║'));
-      for (let i = 0; i < 7; i++) {
-        lines.push(chalk.hex('#00D9FF')('║ ') + ' '.repeat(109) + chalk.hex('#00D9FF')('║'));
-      }
-    } else {
-      lines.push(
-        chalk.hex('#00D9FF')('║ ') +
-        chalk.cyan('SYMBOL'.padEnd(10)) + chalk.cyan('QTY'.padEnd(8)) + chalk.cyan('ENTRY'.padEnd(12)) +
-        chalk.cyan('CURRENT'.padEnd(12)) + chalk.cyan('P/L $'.padEnd(14)) + chalk.cyan('P/L %'.padEnd(12)) +
-        chalk.cyan('VALUE'.padEnd(14)) + chalk.cyan('STATUS'.padEnd(27)) + chalk.hex('#00D9FF')('║')
-      );
-      lines.push(chalk.hex('#00D9FF')('║ ') + chalk.gray('─'.repeat(109)) + chalk.hex('#00D9FF')('║'));
+    const leftHeader = this.padColumn(chalk.hex('#FFD700').bold('📈 OPEN POSITIONS'));
+    const rightHeader = this.padColumn(chalk.hex('#FFD700').bold('🔥 MARKET HEAT'));
+    lines.push(chalk.hex('#00D9FF')('║ ') + leftHeader + chalk.hex('#00D9FF')('║ ') + rightHeader + chalk.hex('#00D9FF')('║'));
 
-      for (let i = 0; i < 6; i++) {
-        if (i < this.tradingData.positions.length) {
-          const pos = this.tradingData.positions[i];
+    lines.push(chalk.hex('#00D9FF')('╠═══════════════════════════════════════════════════╬═══════════════════════════════════════════════════╣'));
+
+    // Get positions and heat data
+    const maxRows = 8;
+
+    for (let i = 0; i < maxRows; i++) {
+      let leftContent = '';
+      let rightContent = '';
+
+      // Left side - Positions
+      if (i === 0) {
+        if (this.tradingData.positions.length === 0) {
+          leftContent = chalk.gray('No open positions');
+        } else {
+          leftContent = chalk.cyan('SYM') + '  ' + chalk.cyan('QTY') + '   ' + chalk.cyan('ENTRY') + '    ' + chalk.cyan('P/L $') + '      ' + chalk.cyan('P/L %');
+        }
+      } else if (i === 1 && this.tradingData.positions.length > 0) {
+        leftContent = chalk.gray('─'.repeat(49));
+      } else if (i >= 2 && this.tradingData.positions.length > 0) {
+        const posIndex = i - 2;
+        if (posIndex < this.tradingData.positions.length) {
+          const pos = this.tradingData.positions[posIndex];
           const pl = parseFloat(pos.unrealized_pl);
           const plPercent = parseFloat(pos.unrealized_plpc) * 100;
           const plColor = pl >= 0 ? chalk.green : chalk.red;
           const plIcon = pl >= 0 ? '📈' : '📉';
-          const currentPrice = parseFloat(pos.current_price);
-          const value = currentPrice * Math.abs(parseFloat(pos.qty));
-          const plBar = this.getProgressBar(Math.min(Math.abs(plPercent), 10) * 10, 15);
 
-          lines.push(
-            chalk.hex('#00D9FF')('║ ') +
-            chalk.yellow(pos.symbol.padEnd(10)) +
-            chalk.white(pos.qty.toString().padEnd(8)) +
-            chalk.white(`$${parseFloat(pos.avg_entry_price).toFixed(2)}`.padEnd(12)) +
-            chalk.white(`$${currentPrice.toFixed(2)}`.padEnd(12)) +
-            plColor.bold(`${pl >= 0 ? '+' : ''}$${pl.toFixed(2)}`.padEnd(14)) +
-            plColor.bold(`${plPercent >= 0 ? '+' : ''}${plPercent.toFixed(2)}%`.padEnd(12)) +
-            chalk.white(`$${value.toFixed(2)}`.padEnd(14)) +
-            plIcon + ' ' + plBar + ' '.repeat(8) + chalk.hex('#00D9FF')('║')
-          );
-        } else {
-          lines.push(chalk.hex('#00D9FF')('║ ') + ' '.repeat(109) + chalk.hex('#00D9FF')('║'));
+          leftContent =
+            plIcon + ' ' +
+            chalk.yellow(pos.symbol.padEnd(6)) + ' ' +
+            chalk.white(pos.qty.toString().padEnd(4)) + ' ' +
+            chalk.white(`$${parseFloat(pos.avg_entry_price).toFixed(2)}`.padEnd(8)) + ' ' +
+            plColor(`${pl >= 0 ? '+' : ''}$${pl.toFixed(2)}`.padEnd(9)) + ' ' +
+            plColor(`${plPercent >= 0 ? '+' : ''}${plPercent.toFixed(1)}%`);
         }
       }
+
+      // Right side - Market Heat
+      if (i === 0) {
+        if (this.tradingData.marketHeat.length === 0) {
+          rightContent = chalk.gray('Scanning for opportunities...');
+        } else {
+          rightContent = chalk.cyan('SYMBOL') + '   ' + chalk.cyan('DIR') + '   ' + chalk.cyan('STR') + '  ' + chalk.cyan('HEAT');
+        }
+      } else if (i === 1 && this.tradingData.marketHeat.length > 0) {
+        rightContent = chalk.gray('─'.repeat(49));
+      } else if (i >= 2 && this.tradingData.marketHeat.length > 0) {
+        const heatIndex = i - 2;
+        if (heatIndex < this.tradingData.marketHeat.length) {
+          const heat = this.tradingData.marketHeat[heatIndex];
+          const signalColor = heat.direction === 'BUY' ? chalk.green : chalk.red;
+          const heatPercent = (heat.strength / 55) * 100;
+          const heatBar = this.getHeatBar(heatPercent, 12);
+          const tempIcon = this.getTemperatureIcon(heatPercent);
+
+          rightContent =
+            chalk.yellow(heat.symbol.padEnd(8)) + ' ' +
+            signalColor(heat.direction.slice(0,3).padEnd(4)) + ' ' +
+            chalk.white(heat.strength.toFixed(0).padEnd(3)) + ' ' +
+            tempIcon + heatBar;
+        }
+      }
+
+      const leftPadded = this.padColumn(leftContent);
+      const rightPadded = this.padColumn(rightContent);
+      lines.push(chalk.hex('#00D9FF')('║ ') + leftPadded + chalk.hex('#00D9FF')('║ ') + rightPadded + chalk.hex('#00D9FF')('║'));
     }
 
-    lines.push(chalk.hex('#00D9FF')('╚═══════════════════════════════════════════════════════════════════════════════════════════════════════════════════╝'));
+    lines.push(chalk.hex('#00D9FF')('╚═══════════════════════════════════════════════════╩═══════════════════════════════════════════════════╝'));
     lines.push('');
 
     // Signals and Trades
@@ -271,8 +322,8 @@ export class InPlaceDashboard {
       this.tradingData.signals = this.tradingData.signals.slice(0, 20);
     }
 
-    // Track hot signals (strength >= 65, approaching trade threshold of 70)
-    if (signal.strength >= 65) {
+    // Track hot signals (strength >= 50, approaching trade threshold of 55)
+    if (signal.strength >= 50) {
       this.tradingData.hotSignals.unshift(signal);
       if (this.tradingData.hotSignals.length > 5) {
         this.tradingData.hotSignals = this.tradingData.hotSignals.slice(0, 5);
@@ -286,6 +337,16 @@ export class InPlaceDashboard {
 
   setNextAnalysisTime(timestamp) {
     this.nextAnalysisTime = timestamp;
+  }
+
+  updateMarketHeat(heatData) {
+    // heatData should be array of: { symbol, direction, strength, indicator }
+    // Sort by strength descending and keep top 10
+    // Show ALL signals below trade threshold (20-54) to see what's happening
+    this.tradingData.marketHeat = heatData
+      .filter(h => h.strength >= 20 && h.strength < 55) // Show all warming signals (20-54)
+      .sort((a, b) => b.strength - a.strength)
+      .slice(0, 10);
   }
 
   addTrade(trade) {

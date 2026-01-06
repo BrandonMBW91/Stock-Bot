@@ -137,9 +137,21 @@ export class TradingEngine {
 
       dashboard.log(`Analyzing ${tradableAssets.length} assets...`, 'info');
 
+      const allHeatData = [];
+
       for (const symbol of tradableAssets) {
-        await this.analyzeSymbol(symbol);
+        const heatItems = await this.analyzeSymbol(symbol);
+        allHeatData.push(...heatItems);
       }
+
+      // Update dashboard with market heat
+      console.log(`Market analysis complete: ${allHeatData.length} total signals detected`);
+      if (allHeatData.length > 0) {
+        const strongest = allHeatData.sort((a, b) => b.strength - a.strength).slice(0, 3);
+        console.log('Top 3 signals:', strongest.map(h => `${h.symbol} ${h.direction} ${h.strength.toFixed(0)}`).join(', '));
+      }
+      dashboard.updateMarketHeat(allHeatData);
+
     } catch (error) {
       dashboard.log(`Error analyzing markets: ${error.message}`, 'error');
       await discordNotifier.sendError('Market Analysis Error', error);
@@ -222,6 +234,8 @@ export class TradingEngine {
 
   async analyzeSymbol(symbol) {
     try {
+      const heatItems = [];
+
       for (const strategy of this.strategies) {
         if (!strategy.isEnabled()) continue;
 
@@ -250,15 +264,26 @@ export class TradingEngine {
             timestamp: new Date()
           });
 
+          // Add to heat tracking
+          heatItems.push({
+            symbol: symbol,
+            direction: signal.signal,
+            strength: signal.strength,
+            indicator: `${strategy.name}: ${signal.reason || 'Multi-indicator confluence'}`
+          });
+
           // dashboard.log(`${strategy.name} signal for ${symbol}: ${signal.signal} (${signal.strength.toFixed(0)})`, 'info');
 
-          if (signal.strength >= 70) {
+          if (signal.strength >= 55) {
             await this.executeSignal(symbol, signal, strategy);
           }
         }
       }
+
+      return heatItems;
     } catch (error) {
       dashboard.log(`Error analyzing ${symbol}: ${error.message}`, 'error');
+      return [];
     }
   }
 
