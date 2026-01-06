@@ -1,3 +1,6 @@
+<img width="1022" height="593" alt="image" src="https://github.com/user-attachments/assets/53b81443-5e3f-4b9d-b54a-b0493dffcb01" />
+
+
 # Alpaca Trading Bot v2.0
 
 A sophisticated multi-strategy trading bot for Alpaca Markets supporting both cryptocurrency and stock trading with real-time monitoring, adaptive risk management, and Discord notifications.
