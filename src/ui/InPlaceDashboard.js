@@ -343,7 +343,7 @@ export class InPlaceDashboard {
     // heatData should be array of: { symbol, direction, strength, indicator }
     // Show signals in the "warming up" zone (20-54) before they reach trade threshold (55+)
     this.tradingData.marketHeat = heatData
-      .filter(h => h.strength >= 20 && h.strength < 55)
+      .filter(h => h.strength >= 20)  // Show all signals 20+
       .sort((a, b) => b.strength - a.strength)
       .slice(0, 10);
   }
