@@ -1,6 +1,13 @@
 import Alpaca from '@alpacahq/alpaca-trade-api';
 import { config } from './ConfigManager.js';
 import { discordNotifier } from './DiscordNotifier.js';
+import { appendFileSync } from 'fs';
+
+function debugLog(msg) {
+  try {
+    appendFileSync('./bot-debug.txt', `[${new Date().toLocaleTimeString()}] ${msg}\n`);
+  } catch (e) {}
+}
 
 class AlpacaClient {
   constructor() {
@@ -104,7 +111,7 @@ class AlpacaClient {
       }
 
       if (barData.length === 0) {
-        console.log(`⚠️  NO BARS returned for ${symbol} ${timeframe} (limit=${limit})`);
+        debugLog(`⚠️  NO BARS returned for ${symbol} ${timeframe} (limit=${limit})`);
       } else {
         // Debug: Log bar structure for first bar
         if (barData.length > 0) {
@@ -123,22 +130,24 @@ class AlpacaClient {
       return barData;
     } catch (error) {
       const errorMsg = `❌ Failed to get bars for ${symbol}: ${error.message}`;
-      console.error(errorMsg);
 
-      // Also log to file so we can see it
+      // Log to file but DON'T spam console or Discord during after-hours
       const { appendFileSync } = await import('fs');
       try {
         appendFileSync('./bot-debug.txt', `[${new Date().toLocaleTimeString()}] ${errorMsg}\n`);
       } catch (e) {}
 
+      // Only send critical errors to Discord (rate limits and crypto 404s)
+      // Skip Discord notifications for empty bars during after-hours
       if (error.message.includes('rate limit') || error.message.includes('429')) {
-        console.error(`🚨 RATE LIMIT HIT! Alpaca is blocking API requests.`);
-      } else if (error.message.includes('404') || error.message.includes('Not Found')) {
-        console.error(`🚨 Symbol ${symbol} NOT FOUND - Check if:`);
-        console.error(`   1. Your Alpaca account has crypto trading enabled`);
-        console.error(`   2. Symbol format is correct (try BTC/USD or BTCUSD)`);
-        console.error(`   3. Your region is approved for crypto trading`);
+        debugLog(`🚨 RATE LIMIT HIT! Alpaca is blocking API requests.`);
+        await discordNotifier.sendError('Alpaca Rate Limit Hit', error);
+      } else if ((error.message.includes('404') || error.message.includes('Not Found')) && symbol.includes('/')) {
+        // Only notify for crypto 404s since those indicate config issues
+        debugLog(`🚨 Symbol ${symbol} NOT FOUND - Check if crypto trading is enabled`);
+        await discordNotifier.sendError(`Crypto Symbol ${symbol} Not Found`, error);
       }
+      // Silently handle empty bars for stocks during after-hours (expected behavior)
 
       return [];
     }
@@ -160,7 +169,7 @@ class AlpacaClient {
       }
       return barData;
     } catch (error) {
-      console.error(`Failed to get historical bars for ${symbol}:`, error.message);
+      debugLog(`Failed to get historical bars for ${symbol}: ${error.message}`);
       return [];
     }
   }
@@ -170,7 +179,7 @@ class AlpacaClient {
       const trade = await this.alpaca.getLatestTrade(symbol);
       return trade;
     } catch (error) {
-      console.error(`Failed to get latest trade for ${symbol}:`, error.message);
+      debugLog(`Failed to get latest trade for ${symbol}: ${error.message}`);
       return null;
     }
   }
@@ -198,22 +207,81 @@ class AlpacaClient {
   }
 
   async buyMarket(symbol, qty, stopLoss, takeProfit) {
-    const orderParams = {
-      symbol: symbol,
-      qty: qty,
-      side: 'buy',
-      type: 'market',
-      time_in_force: 'gtc',
-      order_class: 'bracket',
-      stop_loss: {
-        stop_price: stopLoss
-      },
-      take_profit: {
-        limit_price: takeProfit
-      }
-    };
+    // For quantities >= 1, use bracket orders with whole shares
+    // For fractional quantities, use simple market orders with separate stop-loss/take-profit
+    const roundedQty = Math.floor(qty);
 
-    return await this.placeOrder(orderParams);
+    let orderParams;
+    let needsSeparateOrders = false;
+
+    if (roundedQty >= 1) {
+      // Whole shares: use bracket order with stop-loss and take-profit
+      orderParams = {
+        symbol: symbol,
+        qty: roundedQty,
+        side: 'buy',
+        type: 'market',
+        time_in_force: 'day',
+        order_class: 'bracket',
+        stop_loss: {
+          stop_price: parseFloat(stopLoss.toFixed(2))
+        },
+        take_profit: {
+          limit_price: parseFloat(takeProfit.toFixed(2))
+        }
+      };
+    } else {
+      // Fractional shares: use simple market order
+      debugLog(`Using fractional order for ${symbol}: ${qty.toFixed(4)} shares`);
+      orderParams = {
+        symbol: symbol,
+        qty: parseFloat(qty.toFixed(4)), // Support up to 4 decimal places
+        side: 'buy',
+        type: 'market',
+        time_in_force: 'day'
+      };
+      needsSeparateOrders = true;
+    }
+
+    const mainOrder = await this.placeOrder(orderParams);
+
+    // For fractional shares, create separate stop-loss and take-profit orders
+    if (needsSeparateOrders) {
+      try {
+        // Wait a moment for the main order to fill
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Create stop-loss order
+        const stopLossOrder = {
+          symbol: symbol,
+          qty: parseFloat(qty.toFixed(4)),
+          side: 'sell',
+          type: 'stop',
+          time_in_force: 'gtc',
+          stop_price: parseFloat(stopLoss.toFixed(2))
+        };
+
+        // Create take-profit order
+        const takeProfitOrder = {
+          symbol: symbol,
+          qty: parseFloat(qty.toFixed(4)),
+          side: 'sell',
+          type: 'limit',
+          time_in_force: 'gtc',
+          limit_price: parseFloat(takeProfit.toFixed(2))
+        };
+
+        await this.alpaca.createOrder(stopLossOrder);
+        await this.alpaca.createOrder(takeProfitOrder);
+
+        debugLog(`Created separate SL ($${stopLoss.toFixed(2)}) and TP ($${takeProfit.toFixed(2)}) orders for ${symbol}`);
+      } catch (error) {
+        debugLog(`Failed to create stop-loss/take-profit orders for ${symbol}: ${error.message}`);
+        // Don't fail the main order if SL/TP creation fails
+      }
+    }
+
+    return mainOrder;
   }
 
   async sellMarket(symbol, qty = null) {
@@ -252,6 +320,20 @@ class AlpacaClient {
 
       return true;
     } catch (error) {
+      // Enhanced error logging to capture exact Alpaca API response
+      const errorDetails = {
+        message: error.message,
+        statusCode: error.response?.status,
+        statusText: error.response?.statusText,
+        responseData: error.response?.data,
+        fullError: JSON.stringify(error, null, 2)
+      };
+
+      debugLog(`❌ CLOSE POSITION ERROR for ${symbol}:`);
+      debugLog(`   Status: ${errorDetails.statusCode} ${errorDetails.statusText}`);
+      debugLog(`   Message: ${errorDetails.message}`);
+      debugLog(`   Response: ${JSON.stringify(errorDetails.responseData)}`);
+
       await discordNotifier.sendError(`Failed to close position for ${symbol}`, error);
       throw error;
     }
