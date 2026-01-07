@@ -106,9 +106,16 @@ class AlpacaClient {
       return barData;
     } catch (error) {
       console.error(`❌ Failed to get bars for ${symbol}:`, error.message);
+
       if (error.message.includes('rate limit') || error.message.includes('429')) {
         console.error(`🚨 RATE LIMIT HIT! Alpaca is blocking API requests.`);
+      } else if (error.message.includes('404') || error.message.includes('Not Found')) {
+        console.error(`🚨 Symbol ${symbol} NOT FOUND - Check if:`);
+        console.error(`   1. Your Alpaca account has crypto trading enabled`);
+        console.error(`   2. Symbol format is correct (try BTC/USD or BTCUSD)`);
+        console.error(`   3. Your region is approved for crypto trading`);
       }
+
       return [];
     }
   }
