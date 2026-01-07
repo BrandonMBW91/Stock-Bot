@@ -7,6 +7,19 @@ export class MultiTimeframeAnalyzer {
    * Dramatically improves win rate by filtering false signals
    */
   static async analyzeWithConfirmation(symbol, bars1m, bars5m, bars1h, alpacaClient) {
+    // TEMPORARY: Always confirm for testing Market Heat
+    const TEST_MODE = true;
+    if (TEST_MODE) {
+      return {
+        symbol: symbol,
+        confirmed: true, // Always confirm
+        signal: 'BUY', // Dummy signal
+        strength: 40, // Moderate strength to show in Market Heat
+        timeframes: {},
+        reasoning: ['Test mode - multi-timeframe bypassed']
+      };
+    }
+
     const analysis = {
       symbol: symbol,
       confirmed: false,

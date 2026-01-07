@@ -9,6 +9,13 @@ import { ScalpingStrategy } from '../strategies/ScalpingStrategy.js';
 import { DayTradingStrategy } from '../strategies/DayTradingStrategy.js';
 import { SwingTradingStrategy } from '../strategies/SwingTradingStrategy.js';
 import { trendAnalyzer } from '../analysis/TrendAnalyzer.js';
+import { appendFileSync } from 'fs';
+
+function debugLog(msg) {
+  try {
+    appendFileSync('./bot-debug.txt', `[${new Date().toLocaleTimeString()}] ${msg}\n`);
+  } catch (e) {}
+}
 
 export class TradingEngine {
   constructor() {
@@ -144,11 +151,21 @@ export class TradingEngine {
         allHeatData.push(...heatItems);
       }
 
+      // TEMPORARY: Add fake signals to test Market Heat display
+      const fakeSignals = [
+        { symbol: 'BTCUSD', direction: 'BUY', strength: 52, indicator: 'Test: RSI+MACD' },
+        { symbol: 'ETHUSD', direction: 'SELL', strength: 48, indicator: 'Test: Momentum' },
+        { symbol: 'SOLUSD', direction: 'BUY', strength: 45, indicator: 'Test: BB bounce' },
+        { symbol: 'AVAXUSD', direction: 'BUY', strength: 38, indicator: 'Test: Trend' },
+        { symbol: 'LINKUSD', direction: 'SELL', strength: 35, indicator: 'Test: Overbought' }
+      ];
+      allHeatData.push(...fakeSignals);
+
       // Update dashboard with market heat
-      console.log(`Market analysis complete: ${allHeatData.length} total signals detected`);
+      debugLog(`✓ Analysis: ${allHeatData.length} signals (${fakeSignals.length} TEST) from ${tradableAssets.length} assets`);
       if (allHeatData.length > 0) {
         const strongest = allHeatData.sort((a, b) => b.strength - a.strength).slice(0, 3);
-        console.log('Top 3 signals:', strongest.map(h => `${h.symbol} ${h.direction} ${h.strength.toFixed(0)}`).join(', '));
+        debugLog(`Top 3: ${strongest.map(h => `${h.symbol}=${h.strength.toFixed(0)}`).join(', ')}`);
       }
       dashboard.updateMarketHeat(allHeatData);
 
@@ -236,6 +253,8 @@ export class TradingEngine {
     try {
       const heatItems = [];
 
+      debugLog(`Analyzing ${symbol} with ${this.strategies.length} strategies`);
+
       for (const strategy of this.strategies) {
         if (!strategy.isEnabled()) continue;
 
@@ -254,6 +273,8 @@ export class TradingEngine {
         }
 
         const signal = await strategy.analyze(symbol, bars, alpacaClient);
+
+        debugLog(`${symbol} ${strategy.name}: signal=${signal.signal}, strength=${signal.strength}`);
 
         if (signal.signal !== 'NEUTRAL' && signal.price) {
           dashboard.addSignal({

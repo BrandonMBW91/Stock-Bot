@@ -27,6 +27,9 @@ export class TimeOfDayFilter {
   }
 
   shouldTradeCrypto(hour, minute) {
+    // TEMPORARY: Allow 24/7 crypto trading for testing
+    return true;
+
     // Best crypto trading hours: US trading session (9am-5pm ET)
     // High volume, better liquidity, tighter spreads
 
