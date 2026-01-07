@@ -140,7 +140,9 @@ export class TradingEngine {
     if (!this.isRunning) return;
 
     try {
-      const tradableAssets = this.getTradableAssets();
+      // TEMPORARY: Use stocks only since Alpaca no longer supports crypto
+      const tradableAssets = config.get('assets.stocks').slice(0, 11);
+      // const tradableAssets = this.getTradableAssets();
 
       dashboard.log(`Analyzing ${tradableAssets.length} assets...`, 'info');
 

@@ -625,3 +625,138 @@
 [8:12:42 PM] SHIBUSD Day Trading: NO BARS (got 0)
 [8:12:42 PM] SHIBUSD Swing Trading: NO BARS (got 0)
 [8:12:42 PM] ✓ Analysis: 0 signals from 11 assets
+[8:17:51 PM] Analyzing BTCUSD with 3 strategies
+[8:17:51 PM] BTCUSD Scalping: NO BARS (got 0)
+[8:17:51 PM] BTCUSD Day Trading: NO BARS (got 0)
+[8:17:51 PM] BTCUSD Swing Trading: NO BARS (got 0)
+[8:17:51 PM] Analyzing ETHUSD with 3 strategies
+[8:17:51 PM] ETHUSD Scalping: NO BARS (got 0)
+[8:17:51 PM] ETHUSD Day Trading: NO BARS (got 0)
+[8:17:51 PM] ETHUSD Swing Trading: NO BARS (got 0)
+[8:17:51 PM] Analyzing DOGEUSD with 3 strategies
+[8:17:51 PM] DOGEUSD Scalping: NO BARS (got 0)
+[8:17:51 PM] DOGEUSD Day Trading: NO BARS (got 0)
+[8:17:51 PM] DOGEUSD Swing Trading: NO BARS (got 0)
+[8:17:51 PM] Analyzing LTCUSD with 3 strategies
+[8:17:51 PM] LTCUSD Scalping: NO BARS (got 0)
+[8:17:51 PM] LTCUSD Day Trading: NO BARS (got 0)
+[8:17:51 PM] LTCUSD Swing Trading: NO BARS (got 0)
+[8:17:51 PM] Analyzing SOLUSD with 3 strategies
+[8:17:51 PM] SOLUSD Scalping: NO BARS (got 0)
+[8:17:51 PM] SOLUSD Day Trading: NO BARS (got 0)
+[8:17:51 PM] SOLUSD Swing Trading: NO BARS (got 0)
+[8:17:51 PM] Analyzing AVAXUSD with 3 strategies
+[8:17:51 PM] AVAXUSD Scalping: NO BARS (got 0)
+[8:17:51 PM] AVAXUSD Day Trading: NO BARS (got 0)
+[8:17:51 PM] AVAXUSD Swing Trading: NO BARS (got 0)
+[8:17:51 PM] Analyzing AAVEUSD with 3 strategies
+[8:17:51 PM] AAVEUSD Scalping: NO BARS (got 0)
+[8:17:51 PM] AAVEUSD Day Trading: NO BARS (got 0)
+[8:17:51 PM] AAVEUSD Swing Trading: NO BARS (got 0)
+[8:17:51 PM] Analyzing LINKUSD with 3 strategies
+[8:17:51 PM] LINKUSD Scalping: NO BARS (got 0)
+[8:17:51 PM] LINKUSD Day Trading: NO BARS (got 0)
+[8:17:51 PM] LINKUSD Swing Trading: NO BARS (got 0)
+[8:17:51 PM] Analyzing DOTUSD with 3 strategies
+[8:17:52 PM] DOTUSD Scalping: NO BARS (got 0)
+[8:17:52 PM] DOTUSD Day Trading: NO BARS (got 0)
+[8:17:52 PM] DOTUSD Swing Trading: NO BARS (got 0)
+[8:17:52 PM] Analyzing UNIUSD with 3 strategies
+[8:17:52 PM] UNIUSD Scalping: NO BARS (got 0)
+[8:17:52 PM] UNIUSD Day Trading: NO BARS (got 0)
+[8:17:52 PM] UNIUSD Swing Trading: NO BARS (got 0)
+[8:17:52 PM] Analyzing SHIBUSD with 3 strategies
+[8:17:52 PM] SHIBUSD Scalping: NO BARS (got 0)
+[8:17:52 PM] SHIBUSD Day Trading: NO BARS (got 0)
+[8:17:52 PM] SHIBUSD Swing Trading: NO BARS (got 0)
+[8:17:52 PM] ✓ Analysis: 0 signals from 11 assets
+[8:18:51 PM] Analyzing BTCUSD with 3 strategies
+[8:18:51 PM] BTCUSD Scalping: NO BARS (got 0)
+[8:18:51 PM] BTCUSD Day Trading: NO BARS (got 0)
+[8:18:51 PM] BTCUSD Swing Trading: NO BARS (got 0)
+[8:18:51 PM] Analyzing ETHUSD with 3 strategies
+[8:18:51 PM] ETHUSD Scalping: NO BARS (got 0)
+[8:18:51 PM] ETHUSD Day Trading: NO BARS (got 0)
+[8:18:51 PM] ETHUSD Swing Trading: NO BARS (got 0)
+[8:18:51 PM] Analyzing DOGEUSD with 3 strategies
+[8:18:51 PM] DOGEUSD Scalping: NO BARS (got 0)
+[8:18:51 PM] DOGEUSD Day Trading: NO BARS (got 0)
+[8:18:51 PM] DOGEUSD Swing Trading: NO BARS (got 0)
+[8:18:51 PM] Analyzing LTCUSD with 3 strategies
+[8:18:51 PM] LTCUSD Scalping: NO BARS (got 0)
+[8:18:51 PM] LTCUSD Day Trading: NO BARS (got 0)
+[8:18:51 PM] LTCUSD Swing Trading: NO BARS (got 0)
+[8:18:51 PM] Analyzing SOLUSD with 3 strategies
+[8:18:51 PM] SOLUSD Scalping: NO BARS (got 0)
+[8:18:51 PM] SOLUSD Day Trading: NO BARS (got 0)
+[8:18:51 PM] SOLUSD Swing Trading: NO BARS (got 0)
+[8:18:51 PM] Analyzing AVAXUSD with 3 strategies
+[8:18:51 PM] AVAXUSD Scalping: NO BARS (got 0)
+[8:18:51 PM] AVAXUSD Day Trading: NO BARS (got 0)
+[8:18:51 PM] AVAXUSD Swing Trading: NO BARS (got 0)
+[8:18:51 PM] Analyzing AAVEUSD with 3 strategies
+[8:18:51 PM] AAVEUSD Scalping: NO BARS (got 0)
+[8:18:51 PM] AAVEUSD Day Trading: NO BARS (got 0)
+[8:18:51 PM] AAVEUSD Swing Trading: NO BARS (got 0)
+[8:18:51 PM] Analyzing LINKUSD with 3 strategies
+[8:18:51 PM] LINKUSD Scalping: NO BARS (got 0)
+[8:18:52 PM] LINKUSD Day Trading: NO BARS (got 0)
+[8:18:52 PM] LINKUSD Swing Trading: NO BARS (got 0)
+[8:18:52 PM] Analyzing DOTUSD with 3 strategies
+[8:18:52 PM] DOTUSD Scalping: NO BARS (got 0)
+[8:18:52 PM] DOTUSD Day Trading: NO BARS (got 0)
+[8:18:52 PM] DOTUSD Swing Trading: NO BARS (got 0)
+[8:18:52 PM] Analyzing UNIUSD with 3 strategies
+[8:18:52 PM] UNIUSD Scalping: NO BARS (got 0)
+[8:18:52 PM] UNIUSD Day Trading: NO BARS (got 0)
+[8:18:52 PM] UNIUSD Swing Trading: NO BARS (got 0)
+[8:18:52 PM] Analyzing SHIBUSD with 3 strategies
+[8:18:52 PM] SHIBUSD Scalping: NO BARS (got 0)
+[8:18:52 PM] SHIBUSD Day Trading: NO BARS (got 0)
+[8:18:52 PM] SHIBUSD Swing Trading: NO BARS (got 0)
+[8:18:52 PM] ✓ Analysis: 0 signals from 11 assets
+[8:25:50 PM] Analyzing BTC/USD with 3 strategies
+[8:25:50 PM] BTC/USD Scalping: NO BARS (got 0)
+[8:25:50 PM] BTC/USD Day Trading: NO BARS (got 0)
+[8:25:50 PM] BTC/USD Swing Trading: NO BARS (got 0)
+[8:25:50 PM] Analyzing ETH/USD with 3 strategies
+[8:25:50 PM] ETH/USD Scalping: NO BARS (got 0)
+[8:25:51 PM] ETH/USD Day Trading: NO BARS (got 0)
+[8:25:51 PM] ETH/USD Swing Trading: NO BARS (got 0)
+[8:25:51 PM] Analyzing DOGE/USD with 3 strategies
+[8:25:51 PM] DOGE/USD Scalping: NO BARS (got 0)
+[8:25:51 PM] DOGE/USD Day Trading: NO BARS (got 0)
+[8:25:51 PM] DOGE/USD Swing Trading: NO BARS (got 0)
+[8:25:51 PM] Analyzing LTC/USD with 3 strategies
+[8:25:51 PM] LTC/USD Scalping: NO BARS (got 0)
+[8:25:51 PM] LTC/USD Day Trading: NO BARS (got 0)
+[8:25:51 PM] LTC/USD Swing Trading: NO BARS (got 0)
+[8:25:51 PM] Analyzing SOL/USD with 3 strategies
+[8:25:51 PM] SOL/USD Scalping: NO BARS (got 0)
+[8:25:51 PM] SOL/USD Day Trading: NO BARS (got 0)
+[8:25:51 PM] SOL/USD Swing Trading: NO BARS (got 0)
+[8:25:51 PM] Analyzing AVAX/USD with 3 strategies
+[8:25:51 PM] AVAX/USD Scalping: NO BARS (got 0)
+[8:25:51 PM] AVAX/USD Day Trading: NO BARS (got 0)
+[8:25:51 PM] AVAX/USD Swing Trading: NO BARS (got 0)
+[8:25:51 PM] Analyzing AAVE/USD with 3 strategies
+[8:25:51 PM] AAVE/USD Scalping: NO BARS (got 0)
+[8:25:51 PM] AAVE/USD Day Trading: NO BARS (got 0)
+[8:25:51 PM] AAVE/USD Swing Trading: NO BARS (got 0)
+[8:25:51 PM] Analyzing LINK/USD with 3 strategies
+[8:25:51 PM] LINK/USD Scalping: NO BARS (got 0)
+[8:25:51 PM] LINK/USD Day Trading: NO BARS (got 0)
+[8:25:51 PM] LINK/USD Swing Trading: NO BARS (got 0)
+[8:25:51 PM] Analyzing DOT/USD with 3 strategies
+[8:25:51 PM] DOT/USD Scalping: NO BARS (got 0)
+[8:25:51 PM] DOT/USD Day Trading: NO BARS (got 0)
+[8:25:51 PM] DOT/USD Swing Trading: NO BARS (got 0)
+[8:25:51 PM] Analyzing UNI/USD with 3 strategies
+[8:25:51 PM] UNI/USD Scalping: NO BARS (got 0)
+[8:25:51 PM] UNI/USD Day Trading: NO BARS (got 0)
+[8:25:51 PM] UNI/USD Swing Trading: NO BARS (got 0)
+[8:25:51 PM] Analyzing SHIB/USD with 3 strategies
+[8:25:51 PM] SHIB/USD Scalping: NO BARS (got 0)
+[8:25:51 PM] SHIB/USD Day Trading: NO BARS (got 0)
+[8:25:51 PM] SHIB/USD Swing Trading: NO BARS (got 0)
+[8:25:51 PM] ✓ Analysis: 0 signals from 11 assets

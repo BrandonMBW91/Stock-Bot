@@ -27,8 +27,8 @@ export class TimeOfDayFilter {
   }
 
   shouldTradeCrypto(hour, minute) {
-    // TEMPORARY: Allow 24/7 crypto trading for testing
-    return true;
+    // Alpaca no longer supports crypto - this method is unused
+    return false;
 
     // Best crypto trading hours: US trading session (9am-5pm ET)
     // High volume, better liquidity, tighter spreads
