@@ -10,7 +10,7 @@ import { rsiSlope } from '../analysis/RSISlope.js';
 export class DayTradingStrategy extends BaseStrategy {
   constructor() {
     super('Day Trading', '5Min');
-    this.minSignalStrength = 65;
+    this.minSignalStrength = 45; // Lowered to generate more signals for Market Heat
   }
 
   async analyze(symbol, bars, alpacaClient) {

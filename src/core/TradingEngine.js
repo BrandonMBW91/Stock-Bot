@@ -151,18 +151,8 @@ export class TradingEngine {
         allHeatData.push(...heatItems);
       }
 
-      // TEMPORARY: Add fake signals to test Market Heat display
-      const fakeSignals = [
-        { symbol: 'BTCUSD', direction: 'BUY', strength: 52, indicator: 'Test: RSI+MACD' },
-        { symbol: 'ETHUSD', direction: 'SELL', strength: 48, indicator: 'Test: Momentum' },
-        { symbol: 'SOLUSD', direction: 'BUY', strength: 45, indicator: 'Test: BB bounce' },
-        { symbol: 'AVAXUSD', direction: 'BUY', strength: 38, indicator: 'Test: Trend' },
-        { symbol: 'LINKUSD', direction: 'SELL', strength: 35, indicator: 'Test: Overbought' }
-      ];
-      allHeatData.push(...fakeSignals);
-
       // Update dashboard with market heat
-      debugLog(`✓ Analysis: ${allHeatData.length} signals (${fakeSignals.length} TEST) from ${tradableAssets.length} assets`);
+      debugLog(`✓ Analysis: ${allHeatData.length} signals from ${tradableAssets.length} assets`);
       if (allHeatData.length > 0) {
         const strongest = allHeatData.sort((a, b) => b.strength - a.strength).slice(0, 3);
         debugLog(`Top 3: ${strongest.map(h => `${h.symbol}=${h.strength.toFixed(0)}`).join(', ')}`);

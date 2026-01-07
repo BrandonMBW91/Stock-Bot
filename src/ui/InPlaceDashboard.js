@@ -341,19 +341,11 @@ export class InPlaceDashboard {
 
   updateMarketHeat(heatData) {
     // heatData should be array of: { symbol, direction, strength, indicator }
-    // Sort by strength descending and keep top 10
-    // TEMPORARILY: Show ALL signals (any strength) to verify it's working
-    console.log(`[DEBUG] updateMarketHeat called with ${heatData.length} items`);
-
+    // Show signals in the "warming up" zone (20-54) before they reach trade threshold (55+)
     this.tradingData.marketHeat = heatData
-      .filter(h => h.strength >= 1) // Show ALL signals temporarily
+      .filter(h => h.strength >= 20 && h.strength < 55)
       .sort((a, b) => b.strength - a.strength)
-      .slice(0, 6); // Show top 6
-
-    console.log(`[DEBUG] Market Heat now has ${this.tradingData.marketHeat.length} items`);
-    if (this.tradingData.marketHeat.length > 0) {
-      console.log(`[DEBUG] Top item: ${this.tradingData.marketHeat[0].symbol} ${this.tradingData.marketHeat[0].direction} ${this.tradingData.marketHeat[0].strength}`);
-    }
+      .slice(0, 10);
   }
 
   addTrade(trade) {

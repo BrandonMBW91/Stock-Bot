@@ -10,7 +10,7 @@ import { rsiSlope } from '../analysis/RSISlope.js';
 export class SwingTradingStrategy extends BaseStrategy {
   constructor() {
     super('Swing Trading', '4Hour');
-    this.minSignalStrength = 75;
+    this.minSignalStrength = 50; // Lowered to generate more signals for Market Heat
   }
 
   async analyze(symbol, bars, alpacaClient) {

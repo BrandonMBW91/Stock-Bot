@@ -77,39 +77,40 @@ export class RSISlope {
 
   /**
    * Generate trading signal based on RSI slope analysis
+   * RELAXED thresholds to generate more signals for Market Heat
    */
   static getSignal(currentRSI, slope, direction) {
     // Strong bullish: RSI rising from oversold
-    if (currentRSI < 40 && slope > 2 && direction === 'UP') {
+    if (currentRSI < 40 && slope > 1.5 && direction === 'UP') {
       return 'STRONG_BUY';
     }
 
-    // Bullish: RSI trending up with momentum
-    if (currentRSI > 30 && currentRSI < 60 && slope > 1 && direction === 'UP') {
+    // Bullish: RSI trending up with momentum (RELAXED from 1 to 0.5)
+    if (currentRSI > 30 && currentRSI < 60 && slope > 0.5 && direction === 'UP') {
       return 'BUY';
     }
 
-    // Weak bullish: RSI rising but approaching overbought
-    if (currentRSI > 50 && currentRSI < 70 && slope > 0.5 && direction === 'UP') {
+    // Weak bullish: RSI rising but approaching overbought (RELAXED from 0.5 to 0.3)
+    if (currentRSI > 50 && currentRSI < 70 && slope > 0.3 && direction === 'UP') {
       return 'WEAK_BUY';
     }
 
-    // Strong bearish: RSI falling from overbought
-    if (currentRSI > 60 && slope < -2 && direction === 'DOWN') {
+    // Strong bearish: RSI falling from overbought (RELAXED from -2 to -1.5)
+    if (currentRSI > 60 && slope < -1.5 && direction === 'DOWN') {
       return 'STRONG_SELL';
     }
 
-    // Bearish: RSI trending down with momentum
-    if (currentRSI > 40 && currentRSI < 70 && slope < -1 && direction === 'DOWN') {
+    // Bearish: RSI trending down with momentum (RELAXED from -1 to -0.5)
+    if (currentRSI > 40 && currentRSI < 70 && slope < -0.5 && direction === 'DOWN') {
       return 'SELL';
     }
 
-    // Weak bearish: RSI falling but approaching oversold
-    if (currentRSI > 30 && currentRSI < 50 && slope < -0.5 && direction === 'DOWN') {
+    // Weak bearish: RSI falling but approaching oversold (RELAXED from -0.5 to -0.3)
+    if (currentRSI > 30 && currentRSI < 50 && slope < -0.3 && direction === 'DOWN') {
       return 'WEAK_SELL';
     }
 
-    // Reversal signals
+    // Reversal signals (no change, already sensitive)
     if (currentRSI < 30 && slope > 0 && direction === 'UP') {
       return 'REVERSAL_BUY'; // Bouncing from oversold
     }

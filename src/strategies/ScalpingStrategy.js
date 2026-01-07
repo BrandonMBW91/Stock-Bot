@@ -11,7 +11,7 @@ import { rsiSlope } from '../analysis/RSISlope.js';
 export class ScalpingStrategy extends BaseStrategy {
   constructor() {
     super('Scalping', '1Min');
-    this.minSignalStrength = 60;
+    this.minSignalStrength = 45; // Lowered to generate more signals for Market Heat
   }
 
   async analyze(symbol, bars, alpacaClient) {
